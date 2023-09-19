@@ -9,7 +9,7 @@ metadata:
 spec:
   project: default
   source:
-    chart: slackernews-mackerel/slackernews
+    chart: slackernews-mackerel/unstable/slackernews
     repoURL: registry.shortrib.io
     targetRevision: 0.5.207
     helm:
