@@ -11,7 +11,7 @@ spec:
   source:
     chart: slackernews-mackerel/unstable/slackernews
     repoURL: registry.shortrib.io
-    targetRevision: 0.5.207
+    targetRevision: 0.5.209
     helm:
       values: |
         postgres:
