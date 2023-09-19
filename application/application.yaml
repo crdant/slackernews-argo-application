@@ -13,7 +13,6 @@ spec:
     repoURL: registry.shortrib.io
     targetRevision: 0.5.207
     helm:
-      passCredentials: true
       values: |
         postgres:
           deploy_postgres: true 
