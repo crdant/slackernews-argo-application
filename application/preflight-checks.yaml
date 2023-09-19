@@ -23,9 +23,13 @@ spec:
         - |
           # little bit of a hack since the exit code for `preflight` is not an indicator
           # as to whether there were any failures
+
+          TOKEN=$(jq -r '.bearerToken' /var/run/secrets/argocd.io/cluster/config)
+          CA=$(jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config)
+
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews | preflight --interactive=false --format json \
-            --server https://10.24.1.67:6443 --certificate-authority /var/run/secrets/postfacto.io/cluster/ca.crt \
-            --token $(cat /var/run/secrets/postfacto.io/cluster/token) -f - | grep -q "fail"
+            --server https://racoon.lab.shortrib.net:6443 --certificate-authority $CA \
+            --token $TOKEN -f - | grep -q "fail"
           # since we looked for failure, we need to invert the result by comparing to 0
           test $? -ne 0 
           exit $?
@@ -33,8 +37,9 @@ spec:
         - mountPath: /home/preflight/.docker
           name: registry-credentials
           readOnly: true
-        - mountPath: /var/run/secrets/postfacto.io/cluster
-          name: cluster-credentials
+        - mountPath: /var/run/secrets/argocd.io/cluster
+          name: argo-cluster-credentials
+          readOnly: true
       volumes:
       - name: registry-credentials
         secret:
