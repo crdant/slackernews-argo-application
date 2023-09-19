@@ -23,13 +23,17 @@ spec:
         - |
           # little bit of a hack since the exit code for `preflight` is not an indicator
           # as to whether there were any failures
+          set -euxo pipefail
 
           TOKEN=$(jq -r '.bearerToken' /var/run/secrets/argocd.io/cluster/config)
           CA=$(jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config)
 
-          helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews | preflight --interactive=false --format json \
-            --server https://racoon.lab.shortrib.net:6443 --certificate-authority $CA \
-            --token $TOKEN -f - | grep -q "fail"
+          helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
+            | kubectl preflight --interactive=false --format json --server https://racoon.lab.shortrib.net:6443 \
+                --certificate-authority $CA \
+                --token $TOKEN -f - \
+            | grep -q "fail"
+           
           # since we looked for failure, we need to invert the result by comparing to 0
           test $? -ne 0 
           exit $?
