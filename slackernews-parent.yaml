@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: slackernews-parent
-  namespace: argocd
+  namespace: helmvm
 spec:
   project: default
   source:
