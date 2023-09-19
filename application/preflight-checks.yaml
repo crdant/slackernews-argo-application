@@ -30,8 +30,10 @@ spec:
           jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
 
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
+              --set postgres.deploy_postgres=false \
             | kubectl preflight --interactive=false --format json --server https://racoon.lab.shortrib.net:6443 \
-                --certificate-authority ${HOME}/ca.crt --client-certificate ${HOME}/client.crt --client-key ${HOME}/client.key - \
+                --certificate-authority ${HOME}/ca.crt --client-certificate ${HOME}/client.crt \
+                --client-key ${HOME}/client.key - \
             | grep -q "fail"
            
           # since we looked for failure, we need to invert the result by comparing to 0
