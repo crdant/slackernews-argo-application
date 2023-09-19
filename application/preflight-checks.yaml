@@ -25,8 +25,8 @@ spec:
           # as to whether there were any failures
           set -euxo pipefail
 
-          jq -r '.tlsClientConfig.keyData' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.key
-          jq -r '.tlsClientConfig.certData' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
+          jq -r '.tlsClientConfig.keyData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.key
+          jq -r '.tlsClientConfig.certData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
           jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
 
           echo KEY
