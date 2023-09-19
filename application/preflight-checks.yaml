@@ -29,6 +29,13 @@ spec:
           jq -r '.tlsClientConfig.certData' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
           jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
 
+          echo KEY
+          cat ${HOME}/client.key
+          echo "CERT"
+          cat ${HOME}/client.crt
+          echo "CA"
+          cat ${HOME}/ca.crt
+
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
               --set postgres.password=not-used-for-anything-so-not-insecure \
             | kubectl preflight --interactive=false --format json --server https://raccoon.lab.shortrib.net:6443 \
