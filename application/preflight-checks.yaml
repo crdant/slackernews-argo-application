@@ -44,6 +44,8 @@ spec:
         - mountPath: /var/run/secrets/argocd.io/cluster
           name: argo-cluster-credentials
           readOnly: true
+        - mountPath: /home/replicant
+          name: home
       volumes:
       - name: registry-credentials
         secret:
@@ -54,5 +56,7 @@ spec:
       - name: argo-cluster-credentials
         secret:
           secretName: cluster-raccoon.lab.shortrib.net-689020247
+      - name: home
+        emptyDir: {}
       restartPolicy: Never
   backoffLimit: 0
