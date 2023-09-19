@@ -4,6 +4,7 @@ metadata:
   name: preflight-check
   annotations:
     argocd.argoproj.io/hook: PreSync
+  namespace: helmvm
 spec:
   template:
     spec:
