@@ -16,6 +16,7 @@ spec:
       values: |
         postgres:
           deploy_postgres: true 
+          password: strangely-overly-unlikely-sacred-halibut
 
         admin-console:
           adminConsole:
