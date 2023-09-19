@@ -16,7 +16,7 @@ spec:
         image: ghcr.io/crdant/replicated-toolkit@sha256:0cc5ada8c4df3bece48f47af9ec0c83aee2a382ca6ecc2a1a1d107c1c1e9d17b
         env:
         - name: HOME
-          value: /home/preflight
+          value: /home/replicant
         command:
         - bash
         - -c 
