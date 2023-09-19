@@ -1,9 +1,10 @@
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
   creationTimestamp: null
   name: slackernews-repository
-  namespace: argocd
+  namespace: helmvm
 spec:
   encryptedData:
     enableOCI: AgCVk90UlJ2jd3a6hALwGGFL4nnjhTdqIER8Tv2PDKoXhlVYB/UwrppcENrSrugd/ht+2CbIRFx0wAmGuTlUMr4p/aMqaW5FJ087r3EoXiIooV0eyLwuA4HKuz3BvUAQBZR4Fq1eGVSatwqdJgJI7h/bA38cBfbdCR0UQ/m0bF+fprsHOiUFWD4P8YPaBukqdZKs8RSHiANy8r4qRXn4VtOWIa8nqbiSWQ+T3+TSoU16gQanIwjjrLUvzcsj09reEqV+cwNavI2y2V9giiEKSRJ0AitBC4ShUrQGqjsA8wC02L5TURtopBKY1s94qEQDVeBLo5CfLP6/y1H5wLsZsk2Xgkp0ZBRxSY3aZKXef7g9tet9IEBmPsx9I0hhmnPyEMX+mcjUOWK7flGrhihFaEAtbnL63KgYmEMcDpDV9WNMgKI5iUBzqTn2h9yTsLwyNtpdH7hmwpUTyO5E0uuGmg9CUEAz4idS+XWdsfAvnw0UfcR47jPQDoDgUuPpR7CBgY1P87cpjX7Ew7pu/kFc5yduPbTsz4NyW14ul63977hhRt1uQzmv8/nwxKvFbmFI7rctkAObOkxhHFDK8SSa5Tzi8GGpmfT94tLh6S8Z+/airxyrAuxs8IPEGmS7i5oyXYc/oC8/QvxJViT44/EfQ5awLUR6AkjS+MLZ7Nno1iau2N8QPNGoCIlPMXxXKrRB4OqGtEI/
@@ -16,5 +17,4 @@ spec:
     metadata:
       creationTimestamp: null
       name: slackernews-repository
-      namespace: argocd
----
+      namespace: helmvm

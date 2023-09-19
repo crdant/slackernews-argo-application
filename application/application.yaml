@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: slackernews
-  namespace: argocd
+  namespace: helmvm
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 # needs values that are set in the slackernews-replicated HelmChart CR
