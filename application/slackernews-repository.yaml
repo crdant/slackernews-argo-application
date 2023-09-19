@@ -1,7 +1,7 @@
+---
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  creationTimestamp: null
   name: slackernews-repository
   namespace: helmvm
 spec:
@@ -14,7 +14,7 @@ spec:
     username: AgA6nw0naTDFvelDUS7LokCa+uqIjQmyTymEVZr/VoU0bsQDgXhf7kZL2Aff6GAyB7omyABo3/X8Hg+NCNfTYfsoJrmSRwL9DmuX3v4bmogOj+lYAF5VrBvs6Xf8Ys2BEm0kymFF2f4r0+bSWnfVjlAVJpnaJ2IARWz/ZwbYmve9bYyrpH/jzg5CJ3KBtL10t+P0ToJ0KfmaZi5CaxjyYwNQvP4aN3NOLc72hPDBzKTf1KO33mocPYQSLca0c5/35egXFUIXIAs9Rzb+XWD8woesRV/u/099tL+nREN4Xw2LSobn+0U7dkbZMNk2Ej+pBEl1UkQMn+I6gaswsqRd64U+gVnboc8DyZtZm7+TetngBFZE/l7Q5KusaX5m2YDzuBmzYoOd+/Rk0ICvh1CHAHXkIQ0uaRVZ/XRfniwhwYStvt3D68WQgEmRwEVbaA/9+9e7hDrQ0DlCgcEzkFq+qk3+XxBcJJ3zm0GxHoS2Bb5dPoRG2dqdU4wsGteYIKeSGYmCvqawCoJtT4y6+UrKJOieUKcjYvWnoY6kH9jCka8jZA7tjvABJ7PEAUPtYYJm2lur1/7FBXyaqV/qfpj/rTMDa/v1pU2eZo9RGigTQg7sfrlVECPnC6TW+vvhhqzTU46Bbwv4pjPZzw4FjFSpYacstgGuZ8ThX0YL/Vwxbm2ftbiUi3YpnmS5Z332HNEob4Rt9AgynnjE5tvvq7epJT9gubs=
   template:
     metadata:
-      creationTimestamp: null
       name: slackernews-repository
       namespace: helmvm
----
+      labels:
+        argocd.argoproj.io/secret-type: repository
