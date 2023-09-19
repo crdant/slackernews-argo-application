@@ -25,12 +25,13 @@ spec:
           # as to whether there were any failures
           set -euxo pipefail
 
-          TOKEN=$(jq -r '.bearerToken' /var/run/secrets/argocd.io/cluster/config)
+          KEY=$(jq -r '.tlsClientConfig.keyData' /var/run/secrets/argocd.io/cluster/config)
+          CERT=$(jq -r '.tlsClientConfig.certData' /var/run/secrets/argocd.io/cluster/config)
           CA=$(jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config)
 
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
             | kubectl preflight --interactive=false --format json --server https://racoon.lab.shortrib.net:6443 \
-                --certificate-authority "$CA" --token "$TOKEN" -f - \
+                --certificate-authority "${CA}" --client-certificate "${CERT}" --client-key "${KEY}" - \
             | grep -q "fail"
            
           # since we looked for failure, we need to invert the result by comparing to 0
