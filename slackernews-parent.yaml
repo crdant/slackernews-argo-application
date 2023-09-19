@@ -9,7 +9,7 @@ spec:
     repoURL: https://github.com/crdant/slackernews-argo-application.git
     path: application
   destination:
-    namespace: argocd
+    namespace: helmvm
     server: https://kubernetes.default.svc
   syncPolicy:
     automated:
