@@ -30,8 +30,7 @@ spec:
 
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
             | kubectl preflight --interactive=false --format json --server https://racoon.lab.shortrib.net:6443 \
-                --certificate-authority $CA \
-                --token $TOKEN -f - \
+                --certificate-authority "$CA" --token "$TOKEN" -f - \
             | grep -q "fail"
            
           # since we looked for failure, we need to invert the result by comparing to 0
