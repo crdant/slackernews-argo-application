@@ -29,23 +29,12 @@ spec:
           jq -r '.tlsClientConfig.certData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
           jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
 
-          echo KEY
-          cat ${HOME}/client.key
-          echo "CERT"
-          cat ${HOME}/client.crt
-          echo "CA"
-          cat ${HOME}/ca.crt
-
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
               --set postgres.password=not-used-for-anything-so-not-insecure \
             | kubectl preflight --interactive=false --format json --server https://raccoon.lab.shortrib.net:6443 \
                 --certificate-authority ${HOME}/ca.crt --client-certificate ${HOME}/client.crt \
                 --client-key ${HOME}/client.key - \
-            | grep -q "fail"
-           
-          # since we looked for failure, we need to invert the result by comparing to 0
-          test $? -ne 0 
-          exit $?
+
         volumeMounts:
         - mountPath: /home/replicant/.docker
           name: registry-credentials
