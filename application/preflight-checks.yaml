@@ -1,4 +1,3 @@
----
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -11,24 +10,9 @@ spec:
       securityContext:
         runAsUser: 1001
         runAsGroup: 1001
-      initContainers:
-      - name: format-credentials
-        image: nixery.dev/shell/jq
-        command:
-        - bash
-        - -c
-        - |
-          jq -r '.bearerToken' /var/run/secrets/argocd.io/cluster/config > /var/run/secrets/slackernews.io/cluster/token
-          jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > /var/run/secrets/slackernews.io/cluster/ca.crt
-        volumeMounts:
-        - mountPath: /var/run/secrets/argocd.io/cluster
-          name: argo-cluster-credentials
-          readOnly: true
-        - mountPath: /var/run/secrets/slackernews.io/cluster
-          name: cluster-credentials
       containers:
       - name: check
-        image: replicated/preflight
+        image: ghrc.io/crdant/replicated-toolkit@sha256:0cc5ada8c4df3bece48f47af9ec0c83aee2a382ca6ecc2a1a1d107c1c1e9d17b
         env:
         - name: HOME
           value: /home/preflight
@@ -39,8 +23,8 @@ spec:
           # little bit of a hack since the exit code for `preflight` is not an indicator
           # as to whether there were any failures
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews | preflight --interactive=false --format json \
-            --server https://raccoon.lab.shortrib.net:6443 --certificate-authority /var/run/secrets/slackernews.io/cluster/ca.crt \
-            --token $(cat /var/run/secrets/slackernews.io/cluster/token) | grep -q "fail"
+            --server https://10.24.1.67:6443 --certificate-authority /var/run/secrets/postfacto.io/cluster/ca.crt \
+            --token $(cat /var/run/secrets/postfacto.io/cluster/token) -f - | grep -q "fail"
           # since we looked for failure, we need to invert the result by comparing to 0
           test $? -ne 0 
           exit $?
@@ -48,7 +32,7 @@ spec:
         - mountPath: /home/preflight/.docker
           name: registry-credentials
           readOnly: true
-        - mountPath: /var/run/secrets/slackernews.io/cluster
+        - mountPath: /var/run/secrets/postfacto.io/cluster
           name: cluster-credentials
       volumes:
       - name: registry-credentials
@@ -60,7 +44,5 @@ spec:
       - name: argo-cluster-credentials
         secret:
           secretName: cluster-raccoon.lab.shortrib.net-689020247
-      - name: cluster-credentials
-        emptyDir: {}
       restartPolicy: Never
   backoffLimit: 0
