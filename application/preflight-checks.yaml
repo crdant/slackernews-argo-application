@@ -25,20 +25,20 @@ spec:
           # as to whether there were any failures
           set -euxo pipefail
 
-          jq -r '.tlsClientConfig.keyData' /var/run/secrets/argocd.io/cluster/config > client.key
-          jq -r '.tlsClientConfig.certData' /var/run/secrets/argocd.io/cluster/config > client.crt
-          jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ca.crt
+          jq -r '.tlsClientConfig.keyData' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.key
+          jq -r '.tlsClientConfig.certData' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
+          jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
 
           helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
             | kubectl preflight --interactive=false --format json --server https://racoon.lab.shortrib.net:6443 \
-                --certificate-authority ca.crt --client-certificate client.crt --client-key client.key - \
+                --certificate-authority ${HOME}/ca.crt --client-certificate ${HOME}/client.crt --client-key ${HOME}/client.key - \
             | grep -q "fail"
            
           # since we looked for failure, we need to invert the result by comparing to 0
           test $? -ne 0 
           exit $?
         volumeMounts:
-        - mountPath: /home/preflight/.docker
+        - mountPath: /home/replicant/.docker
           name: registry-credentials
           readOnly: true
         - mountPath: /var/run/secrets/argocd.io/cluster
@@ -46,6 +46,10 @@ spec:
           readOnly: true
         - mountPath: /home/replicant
           name: home
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsUser: 1001
       volumes:
       - name: registry-credentials
         secret:
