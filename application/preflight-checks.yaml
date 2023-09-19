@@ -58,7 +58,7 @@ spec:
             path: config.json
       - name: argo-cluster-credentials
         secret:
-          secretName: cluster-10.24.1.67-2488001778
+          secretName: cluster-raccoon.lab.shortrib.net-689020247
       - name: cluster-credentials
         emptyDir: {}
       restartPolicy: Never
