@@ -7,7 +7,6 @@ spec:
   project: default
   source:
     repoURL: https://github.com/crdant/slackernews-argo-application.git
-    targetRevision: fix/first-runthrough
     path: application
   destination:
     namespace: helmvm
