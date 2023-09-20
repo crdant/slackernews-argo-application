@@ -4,51 +4,50 @@ metadata:
   name: preflight-check
   annotations:
     argocd.argoproj.io/hook: PreSync
+  namespace: helmvm
 spec:
   template:
     spec:
       securityContext:
         runAsUser: 1001
         runAsGroup: 1001
-      initContainers:
-      - name: format-credentials
-        image: nixery.dev/shell/jq
-        command:
-        - bash
-        - -c
-        - |
-          jq -r '.bearerToken' /var/run/secrets/argocd.io/cluster/config > /var/run/secrets/slackernews.io/cluster/token
-          jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > /var/run/secrets/slackernews.io/cluster/ca.crt
-        volumeMounts:
-        - mountPath: /var/run/secrets/argocd.io/cluster
-          name: argo-cluster-credentials
-          readOnly: true
-        - mountPath: /var/run/secrets/slackernews.io/cluster
-          name: cluster-credentials
       containers:
       - name: check
-        image: replicated/preflight
+        image: ghcr.io/crdant/replicated-toolkit@sha256:0cc5ada8c4df3bece48f47af9ec0c83aee2a382ca6ecc2a1a1d107c1c1e9d17b
         env:
         - name: HOME
-          value: /home/preflight
+          value: /home/replicant
         command:
         - bash
         - -c 
         - |
           # little bit of a hack since the exit code for `preflight` is not an indicator
           # as to whether there were any failures
-          helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews | preflight --interactive=false --format json \
-            --server https://raccoon.lab.shortrib.net:6443 --certificate-authority /var/run/secrets/slackernews.io/cluster/ca.crt \
-            --token $(cat /var/run/secrets/slackernews.io/cluster/token) | grep -q "fail"
-          # since we looked for failure, we need to invert the result by comparing to 0
-          test $? -ne 0 
-          exit $?
+          set -euxo pipefail
+
+          jq -r '.tlsClientConfig.keyData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.key
+          jq -r '.tlsClientConfig.certData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/client.crt
+          jq -r '.tlsClientConfig.caData | @base64d' /var/run/secrets/argocd.io/cluster/config > ${HOME}/ca.crt
+
+          helm template oci://registry.shortrib.io/slackernews-mackerel/unstable/slackernews \
+              --set postgres.password=not-used-for-anything-so-not-insecure \
+            | kubectl preflight --interactive=false --format json --server https://raccoon.lab.shortrib.net:6443 \
+                --certificate-authority ${HOME}/ca.crt --client-certificate ${HOME}/client.crt \
+                --client-key ${HOME}/client.key - \
+
         volumeMounts:
-        - mountPath: /home/preflight/.docker
+        - mountPath: /home/replicant/.docker
           name: registry-credentials
           readOnly: true
-        - mountPath: /var/run/secrets/slackernews.io/cluster
-          name: cluster-credentials
+        - mountPath: /var/run/secrets/argocd.io/cluster
+          name: argo-cluster-credentials
+          readOnly: true
+        - mountPath: /home/replicant
+          name: home
+      securityContext:
+        fsGroup: 1001
+        runAsGroup: 1001
+        runAsUser: 1001
       volumes:
       - name: registry-credentials
         secret:
@@ -58,8 +57,8 @@ spec:
             path: config.json
       - name: argo-cluster-credentials
         secret:
-          secretName: cluster-10.24.1.67-2488001778
-      - name: cluster-credentials
+          secretName: cluster-raccoon.lab.shortrib.net-689020247
+      - name: home
         emptyDir: {}
       restartPolicy: Never
   backoffLimit: 0

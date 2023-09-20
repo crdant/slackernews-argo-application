@@ -2,20 +2,21 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: slackernews
-  namespace: argocd
+  namespace: helmvm
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 # needs values that are set in the slackernews-replicated HelmChart CR
 spec:
   project: default
   source:
-    chart: slackernews-mackerel/slackernews
+    chart: slackernews-mackerel/unstable/slackernews
     repoURL: registry.shortrib.io
-    targetRevision: 0.5.207
+    targetRevision: 0.5.210
     helm:
       values: |
         postgres:
           deploy_postgres: true 
+          password: strangely-overly-unlikely-sacred-halibut
 
         admin-console:
           adminConsole:
@@ -44,6 +45,10 @@ spec:
 
         slackernews:
           domain: news.shortrib.app
+
+        replicated:
+          statusInformers:
+            - deployment/slackernews-frontend
   destination:
     namespace: slackernews
     server: https://raccoon.lab.shortrib.net:6443
